@@ -101,7 +101,7 @@ public class GameService {
 
             if (!gamerLeaderList.isEmpty() &&
                     checkGameLeadersList(gamer)) {
-                System.out.println("Отличный результат, вы попали в пятёрку лидеров игры!");
+                System.out.println("Отличный результат, Вы попали в пятёрку лидеров игры!");
                 gamerLeaderList.put(gamer.getNickName(), gamerPoints);
                 sortLeaderList(gamerLeaderList);
 
