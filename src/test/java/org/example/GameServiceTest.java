@@ -24,7 +24,7 @@ class GameServiceTest {
 
     String nickname1 = "Вася";
     String palindromeString = "потоп";
-    String notPalindromeString = "пото";
+    String notPalindromeString = "ьлоор";
     private final ByteArrayOutputStream outputStreamCaptor = new ByteArrayOutputStream();
     Map<String, Gamer> allGamerListTest = GameMaRepository.getAllGamerList();
     String gameAnswer1 = "Привет, " + nickname1 + "! Добро пожаловать в игру! " +
