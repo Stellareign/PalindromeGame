@@ -23,9 +23,9 @@ class GameServiceTest {
     Map<String, Gamer> allGamerListTest = GameMaRepository.getAllGamerList();
     String nickname1 = "Вася";
     String palindromeString = "потоп";
+    String palindromeString2 = "топот";
     String notPalindromeString = "краска";
     private final ByteArrayOutputStream outputStreamCaptor = new ByteArrayOutputStream();
-
 
     String gameAnswer1 = "Привет, " + nickname1 + "! Добро пожаловать в игру! " +
             "\n Для того, чтобы начать, необходимо написать палиндром - фразу или слово, которые читаются одинаково " +
@@ -38,7 +38,7 @@ class GameServiceTest {
         System.setOut(new PrintStream(outputStreamCaptor));
     }
 
-//*************************************** ТЕСТЫ: **********************************************************************
+//******************************************* ТЕСТЫ: *******************************************************************
     @Test
     @DisplayName(value = "Введён палиндром")
     void palindromeGameWhenIsPalindromeTest() {
@@ -71,5 +71,25 @@ class GameServiceTest {
         assertEquals(gamerLeaderListTest.get("Вася"), null);
         assertEquals(expectedOutput, outputStreamCaptor.toString());
     }
+    @Test
+    @DisplayName(value = "Когда повторно введён палиндром")
+    void palindromeGameWhenIsPalindromeAttempt2Test() {
+        HashMap<String, Integer> gamerPalindromeList = new HashMap<>();
+        gamerPalindromeList.put(palindromeString, 5);
+        Gamer gamerForTest = new Gamer("Вася", gamerPalindromeList);
+        allGamerListTest.put("Вася", gamerForTest);
+        gamerLeaderListTest.put("Вася", 5);
 
+        Gamer gamer = gameService.checkGamerAndPutNewGamerToList(nickname1);
+        String gameAnswer3 = "Привет, Вася! Рады снова видеть Вас в игре. Давайте продолжим.";
+        String gameAnswer4 = "Отличный результат, Вы попали в пятёрку лидеров игры!";
+
+        gameService.addToGamerLeaderList(gamer, palindromeString2);
+        String expectedOutput = gameAnswer3 + System.lineSeparator() + gameAnswer4 + System.lineSeparator();
+
+        assertTrue(allGamerListTest.containsKey("Вася"));
+        assertEquals(getGamerLeaderList().get("Вася"), 10);
+
+        assertEquals(expectedOutput, outputStreamCaptor.toString());
+    }
 }
