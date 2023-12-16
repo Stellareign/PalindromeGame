@@ -1,43 +1,80 @@
-package org.example;
+package org.example.service;
 
 import org.example.models.Gamer;
+
 import java.util.*;
 import java.util.stream.Collectors;
 
+import static org.example.service.GameRepository.allGamerList;
+import static org.example.service.GameRepository.gamerLeaderList;
+
 public class GameService {
 
-    private static Map<String, Gamer> allGamerList = new HashMap<>();
-      private static Map<String, Integer> gamerLeaderList = new HashMap<>();
-
     /**
-     * ИГРА
-     * Метод для игры в палиндром.
-     * Пользователь вводит свой никнейм и палиндром (без цифр, с пробелами),
-     * за который начисляются очки в зависимости от количества букв.
-     * Добавляет игрока в список игроков, если его там нет.
-     * Добавляет очки игроку и обновляет таблицу лидеров.
-     * Выводит информацию о текущем игроке и таблицу лидеров.
+     * Метод проверяет наличия игрока в списке игроков и добавляет нового игрока.
+     * Если игрок уже есть в списке, метод возвращает его объект.
+     * Если игрока нет в списке, метод создает новый объект игрока и добавляет его в список.
+     * Метод также выводит соответствующее приветственное сообщение для игрока.
+     *
+     * @param nickName никнейм игрока
+     * @return объект игрока
      */
-    public void palindromeGame() {
-        Scanner scanner = new Scanner(System.in);
-        System.out.println("Введите ваш никнейм");
-
-        String nickname = scanner.nextLine();
-
-        Gamer gamer = checkGamerAndPutNewGamerToList(nickname);
-
-        System.out.println("Введите Ваш палиндром, цифры не допускаются. Чем больше букв, тем больше очков (пробелы не учитываются).");
-        String palindromeString = scanner.nextLine();
-
-        addToGamerLeaderList(gamer, palindromeString);
-
-        System.out.println(gamer);
-        printLeaderTable();
+    public Gamer checkGamerAndPutNewGamerToList(String nickName) {
+        HashMap<String, Integer> gamerPalindromeList = new HashMap<>();
+        Gamer gamer = new Gamer(nickName, gamerPalindromeList);
+        if (allGamerList.containsKey(nickName)) {
+            System.out.println("Привет, " + nickName + "! Рады снова видеть вас в игре. Давайте продолжим.");
+            return allGamerList.get(nickName);
+        }
+        allGamerList.put(nickName, gamer);
+        System.out.println("Привет, " + nickName + "! Добро пожаловать в игру!");
+        return gamer;
     }
-//*********************************************************************************************************************
 
+
+    //*************************************************************************************************************
+    /**
+     * Метод добавляет во время игры палиндром в коллекцию игрока, обновляет список всех игроков
+     * и проверяет результат игрока.
+     *
+     * @param gamer  объект класса Gamer, представляющий игрока
+     * @param string строка, содержащая палиндром, который нужно добавить в коллекцию игрока
+     */
+    public void addToGamerLeaderList(Gamer gamer, String string) {
+        String unitString = string.replaceAll("[\\p{Punct}\\s]", "").trim().toUpperCase();
+
+        if (palindromeCheck(string) && checkGamerPaliCollectForRepeat(string, gamer.getGamerPalindromeList())) {
+            doPalindromeGamerCollection(string, gamer); // добавляем палиндром после проверки в коллекцию игрока
+            allGamerList.put(gamer.getNickName(), gamer); //обновляем лист игроков
+
+            int gamerPoints = getGamersPoints(allGamerList.get(gamer.getNickName())); // выбираем количество очков из коллекции игрока
+
+            if (!gamerLeaderList.isEmpty() &&
+                    checkGameLeadersList(gamer)) {
+                System.out.println("Отличный результат, Вы попали в пятёрку лидеров игры!");
+                gamerLeaderList.put(gamer.getNickName(), gamerPoints);
+                sortLeaderList(gamerLeaderList);
+
+            } else if (gamerLeaderList.isEmpty()) {
+                gamerLeaderList.put(gamer.getNickName(), unitString.length());
+                System.out.println("Неплохой результат! Ваш суммарный балл " + gamerPoints);
+
+            } else if (!checkGameLeadersList(gamer)) {
+                System.out.println("Неплохой результат, но есть к чему стремиться! Ваш суммарный балл " + gamerPoints);
+            }
+        } else if (!palindromeCheck(string)) {
+            System.out.println("Это не палиндром. Попробуйте ещё раз!");
+        } else if (!checkGamerPaliCollectForRepeat(string, gamer.getGamerPalindromeList())) {
+
+            System.out.println("Такой палиндром уже есть в Вашем списке. Придумайте что-нибудь другое :)");
+        }
+    }
+
+    //******************************************************************************************************************
+    //**************************************ВСПОмОГАТЕЛЬНЫЕ МЕТОДЫ******************************************************
     /**
      * ПРОВЕРКА СТРОКИ ГНА ПАЛИНДРОМ
+     *
      * @param str
      * @return
      */
@@ -62,68 +99,8 @@ public class GameService {
 
     //*************************************************************************************************************
     /**
-     * Метод проверяет наличия игрока в списке игроков и добавляет нового игрока.
-     * Если игрок уже есть в списке, метод возвращает его объект.
-     * Если игрока нет в списке, метод создает новый объект игрока и добавляет его в список.
-     * Метод также выводит соответствующее приветственное сообщение для игрока.
-     *
-     * @param nickName никнейм игрока
-     * @return объект игрока
-     */
-    private Gamer checkGamerAndPutNewGamerToList(String nickName) {
-        HashMap<String, Integer> gamerPalindromeList = new HashMap<>();
-        Gamer gamer = new Gamer(nickName, gamerPalindromeList);
-        if (allGamerList.containsKey(nickName)) {
-            System.out.println("Привет, " + nickName + "! Рады снова видеть вас в игре. Давайте продолжим.");
-            return allGamerList.get(nickName);
-        }
-        allGamerList.put(nickName, gamer);
-        System.out.println("Привет, " + nickName + "! Добро пожаловать в игру!");
-        return gamer;
-    }
-
-
-    //*************************************************************************************************************
-    /**
-     * Метод добавляет во время игры палиндром в коллекцию игрока, обновляет список всех игроков
-     * и проверяет результат игрока.
-     * @param gamer объект класса Gamer, представляющий игрока
-     * @param string строка, содержащая палиндром, который нужно добавить в коллекцию игрока
-     */
-      private void addToGamerLeaderList(Gamer gamer, String string) {
-        String unitString = string.replaceAll("[\\p{Punct}\\s]", "").trim().toUpperCase();
-
-        if (palindromeCheck(string) && checkGamerPaliCollectForRepeat(string, gamer.getGamerPalindromeList())) {
-            doPalindromeGamerCollection(string, gamer); // добавляем палиндром после проверки в коллекцию игрока
-            allGamerList.put(gamer.getNickName(), gamer); //обновляем лист игроков
-
-            int gamerPoints = getGamersPoints(allGamerList.get(gamer.getNickName())); // выбираем количество очков из коллекции игрока
-
-            if (!gamerLeaderList.isEmpty() &&
-                    checkGameLeadersList(gamer)) {
-                System.out.println("Отличный результат, Вы попали в пятёрку лидеров игры!");
-                gamerLeaderList.put(gamer.getNickName(), gamerPoints);
-                sortLeaderList(gamerLeaderList);
-
-            } else if (gamerLeaderList.isEmpty()) {
-                gamerLeaderList.put(gamer.getNickName(), unitString.length());
-                System.out.println("Неплохой результат! Ваш суммарный балл " + gamerPoints);
-
-            } else if (!checkGameLeadersList(gamer)) {
-                System.out.println("Неплохой результат, но есть к чему стремиться! Ваш суммарный балл " + gamerPoints);
-            }
-        } else if (!palindromeCheck(string) ){
-            System.out.println("Это не палиндром. Попробуйте ещё раз!");
-        } else if (!checkGamerPaliCollectForRepeat(string, gamer.getGamerPalindromeList())) {
-
-            System.out.println("Такой палиндром уже есть в Вашем списке. Придумайте что-нибудь другое :)");
-        }
-    }
-
-    //*************************************************************************************************************
-
-    /**
      * ПРОВЕРКА ЛИСТА ЛИДЕРОВ
+     *
      * @param gamer
      * @return возвращает true, если лист лидеров пуст, если суммарное количесво очков игрока больше или равно
      * меньшему количеству баллов в таблице или если количество лидеров меньше пяти
@@ -131,13 +108,14 @@ public class GameService {
     private boolean checkGameLeadersList(Gamer gamer) {
         int minLeaderPoints = Collections.min(gamerLeaderList.values());
 
-        return !gamerLeaderList.isEmpty() && gamer != null && getGamersPoints(gamer) >= minLeaderPoints || gamerLeaderList.size() <5;
+        return !gamerLeaderList.isEmpty() && gamer != null &&
+                getGamersPoints(gamer) >= minLeaderPoints || gamerLeaderList.size() < 5;
     }
 
     //******************************************************************************************************************
-
     /**
      * ПОЛУЧЕНИЕ СУММАРНОГО КОЛИЧЕСТВАБАЛЛОВ ИГРОКА
+     *
      * @param gamer
      * @return
      */
@@ -154,10 +132,11 @@ public class GameService {
         return 0;
     }
 
-    //**********************************************************************************************************************/
+    //******************************************************************************************************************/
 
     /**
      * Сортировка таблицы лидеров в обратном порядке по количеству очков: от большего к меньшему
+     *
      * @param leaderList
      * @return
      */
@@ -166,15 +145,15 @@ public class GameService {
                 .stream()
                 .sorted(Map.Entry.<String, Integer>comparingByValue().reversed())
                 .limit(5)
-                .collect(Collectors.toMap(Map.Entry::getKey, Map.Entry::getValue, (e1, e2) -> e1, LinkedHashMap::new));
+                .collect(Collectors.toMap(Map.Entry::getKey,
+                        Map.Entry::getValue, (e1, e2) -> e1, LinkedHashMap::new));
 
     }
 
-    //*********************************************************************************************************************
-    //добавление палиндрома в коллекцию игрока
-
+    //******************************************************************************************************************
     /**
      * ДОБАВЛЕНИЕ ПАЛИНДРОМА В КОЛЛЕКЦИЮ ИГРОКА
+     *
      * @param string
      * @param gamer
      */
@@ -187,23 +166,25 @@ public class GameService {
     }
 
     //******************************************************************************************************************
-
     /**
      * ПРОВЕРКА ПАЛИНДРОМА, ВВЕДЁННОГО ИГРОКОМ, НА ПОВТОР
+     *
      * @param palindrome
      * @param tempGamerPalindromeList
      * @return возвращает true, если коллекция палиндромов игрока пуста или не содержит введённый палиндром
      */
-    private boolean checkGamerPaliCollectForRepeat(String palindrome, HashMap<String, Integer> tempGamerPalindromeList) {
+    private boolean checkGamerPaliCollectForRepeat(String palindrome,
+                                                   HashMap<String, Integer> tempGamerPalindromeList) {
         return tempGamerPalindromeList.isEmpty() ||
                 !tempGamerPalindromeList.containsKey(palindrome.toUpperCase());
     }
 
     //******************************************************************************************************************
-     /** ПЕЧАТЬ ТАБЛИЦЫ ЛИДЕРОВ ИГРЫ
+    /**
+     * ПЕЧАТЬ ТАБЛИЦЫ ЛИДЕРОВ ИГРЫ
      * Метод выводит на печать таблицу лидеров игры
      */
-    private void printLeaderTable() {
+    public void printLeaderTable() {
         System.out.println("Таблица лидеров:");
         for (Map.Entry<String, Integer> entry : sortLeaderList(gamerLeaderList).entrySet()) {
             System.out.println(entry.getKey() + " - " + entry.getValue());

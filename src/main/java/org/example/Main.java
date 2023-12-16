@@ -9,8 +9,8 @@ import java.util.Map;
 
 public class Main {
     public static void main(String[] args) {
-        GameService GAMESERVICE = new GameService();
-        GAMESERVICE.palindromeGame();
+        Game GAME = new Game();
+        GAME.palindromeGame();
         main(args);
 
     }

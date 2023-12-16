@@ -4,13 +4,13 @@ import java.util.HashMap;
 import java.util.Objects;
 
 public class Gamer {
-       private String nickName;
-       private HashMap<String, Integer> gamerPalindromeList;
+    private String nickName;
+    private HashMap<String, Integer> gamerPalindromeList;
 
     public Gamer() {
     }
 
-    public Gamer( String nickName) {
+    public Gamer(String nickName) {
 
         this.nickName = nickName;
     }
