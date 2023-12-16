@@ -69,8 +69,9 @@ class GameServiceTest {
         assertEquals(gamerLeaderListTest.get("Вася"), null);
         assertEquals(expectedOutput, outputStreamCaptor.toString());
     }
+
     @Test
-    @DisplayName(value = "Когда повторно введён палиндром")
+    @DisplayName(value = "Когда тот же игрок вводит палиндром")
     void palindromeGameWhenIsPalindromeAttempt2Test() {
         HashMap<String, Integer> gamerPalindromeList = new HashMap<>();
         gamerPalindromeList.put(palindromeString, 5);
