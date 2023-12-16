@@ -6,12 +6,10 @@ import org.example.service.GameService;
 import org.junit.jupiter.api.*;
 
 import java.io.PrintStream;
-import java.lang.reflect.Method;
 import java.util.HashMap;
 
 import java.io.ByteArrayOutputStream;
 import java.util.Map;
-import java.util.function.BooleanSupplier;
 
 import static org.example.service.GameMaRepository.*;
 import static org.junit.jupiter.api.Assertions.assertEquals;
