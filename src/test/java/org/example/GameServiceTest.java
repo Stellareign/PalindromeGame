@@ -3,9 +3,7 @@ package org.example;
 import org.example.models.Gamer;
 import org.example.service.GameMaRepository;
 import org.example.service.GameService;
-import org.junit.jupiter.api.BeforeEach;
-import org.junit.jupiter.api.DisplayName;
-import org.junit.jupiter.api.Test;
+import org.junit.jupiter.api.*;
 
 import java.io.PrintStream;
 import java.lang.reflect.Method;
@@ -21,12 +19,15 @@ import static org.junit.jupiter.api.Assertions.assertTrue;
 
 class GameServiceTest {
     private GameService gameService = new GameService();
-
+    Map<String, Integer> gamerLeaderListTest = GameMaRepository.getGamerLeaderList();
+    Map<String, Gamer> allGamerListTest = GameMaRepository.getAllGamerList();
     String nickname1 = "Вася";
     String palindromeString = "потоп";
-    String notPalindromeString = "ьлоор";
+    String palindromeString2 = "топот";
+    String notPalindromeString = "краска";
     private final ByteArrayOutputStream outputStreamCaptor = new ByteArrayOutputStream();
-    Map<String, Gamer> allGamerListTest = GameMaRepository.getAllGamerList();
+
+
     String gameAnswer1 = "Привет, " + nickname1 + "! Добро пожаловать в игру! " +
             "\n Для того, чтобы начать, необходимо написать палиндром - фразу или слово, которые читаются одинаково " +
             "\n в обе стороны, цифры не допускаются. Чем больше букв, тем больше очков (пробелы не учитываются).";
@@ -40,9 +41,11 @@ class GameServiceTest {
 
 
     @Test
-    @DisplayName(value = "Проверка основного метода игры, введён палиндром")
+//    @Order(1)
+    @DisplayName(value = "Введён палиндром")
     void palindromeGameWhenIsPalindromeTest() {
 
+        allGamerListTest.clear(); // чистим мапу после предыдущего тестирования
         Gamer gamer = gameService.checkGamerAndPutNewGamerToList(nickname1);
 
         gameService.addToGamerLeaderList(gamer, palindromeString);
@@ -55,16 +58,21 @@ class GameServiceTest {
     }
 
     @Test
+
     @DisplayName(value = "Когда введён не палиндром")
     void palindromeGameWhenIsNotPalindromeTest() {
 
+        allGamerListTest.clear(); // чистим мапу после предыдущего тестирования
+        gamerLeaderListTest.clear();
         Gamer gamer = gameService.checkGamerAndPutNewGamerToList(nickname1);
+
 
         gameService.addToGamerLeaderList(gamer, notPalindromeString);
         String expectedOutput = gameAnswer1 + System.lineSeparator() + gameAnswerNoPalindrome + System.lineSeparator();
 
         assertTrue(allGamerListTest.containsKey("Вася"));
-        assertEquals(getGamerLeaderList().get("Вася"), null);
+        assertEquals(gamerLeaderListTest.get("Вася"), null);
         assertEquals(expectedOutput, outputStreamCaptor.toString());
     }
+
 }
