@@ -18,12 +18,11 @@ import static org.junit.jupiter.api.Assertions.assertEquals;
 import static org.junit.jupiter.api.Assertions.assertTrue;
 
 class GameServiceTest {
-    private GameService gameService = new GameService();
+    private final GameService gameService = new GameService();
     Map<String, Integer> gamerLeaderListTest = GameMaRepository.getGamerLeaderList();
     Map<String, Gamer> allGamerListTest = GameMaRepository.getAllGamerList();
     String nickname1 = "Вася";
     String palindromeString = "потоп";
-    String palindromeString2 = "топот";
     String notPalindromeString = "краска";
     private final ByteArrayOutputStream outputStreamCaptor = new ByteArrayOutputStream();
 
@@ -39,9 +38,8 @@ class GameServiceTest {
         System.setOut(new PrintStream(outputStreamCaptor));
     }
 
-
+//*************************************** ТЕСТЫ: **********************************************************************
     @Test
-//    @Order(1)
     @DisplayName(value = "Введён палиндром")
     void palindromeGameWhenIsPalindromeTest() {
 
@@ -58,7 +56,6 @@ class GameServiceTest {
     }
 
     @Test
-
     @DisplayName(value = "Когда введён не палиндром")
     void palindromeGameWhenIsNotPalindromeTest() {
 
