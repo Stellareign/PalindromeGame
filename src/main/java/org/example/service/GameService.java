@@ -5,8 +5,8 @@ import org.example.models.Gamer;
 import java.util.*;
 import java.util.stream.Collectors;
 
-import static org.example.service.GameRepository.allGamerList;
-import static org.example.service.GameRepository.gamerLeaderList;
+import static org.example.service.GameMaRepository.allGamerList;
+import static org.example.service.GameMaRepository.gamerLeaderList;
 
 public class GameService {
 
@@ -23,11 +23,13 @@ public class GameService {
         HashMap<String, Integer> gamerPalindromeList = new HashMap<>();
         Gamer gamer = new Gamer(nickName, gamerPalindromeList);
         if (allGamerList.containsKey(nickName)) {
-            System.out.println("Привет, " + nickName + "! Рады снова видеть вас в игре. Давайте продолжим.");
+            System.out.println("Привет, " + nickName + "! Рады снова видеть Вас в игре. Давайте продолжим.");
             return allGamerList.get(nickName);
         }
         allGamerList.put(nickName, gamer);
-        System.out.println("Привет, " + nickName + "! Добро пожаловать в игру!");
+        System.out.println("Привет, " + nickName + "! Добро пожаловать в игру! " +
+                        "\n Для того, чтобы начать, необходимо написать палиндром - фразу или слово, которые читаются одинаково " +
+                        "\n в обе стороны, цифры не допускаются. Чем больше букв, тем больше очков (пробелы не учитываются).");
         return gamer;
     }
 

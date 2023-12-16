@@ -6,7 +6,7 @@ import org.example.service.GameService;
 import java.util.Scanner;
 
 public class Game {
-     private GameService gameService = new GameService();
+     private final GameService gameService = new GameService();
 
     /**
      * ИГРА
@@ -25,7 +25,7 @@ public class Game {
 
         Gamer gamer = gameService.checkGamerAndPutNewGamerToList(nickname);
 
-        System.out.println("Введите Ваш палиндром, цифры не допускаются. Чем больше букв, тем больше очков (пробелы не учитываются).");
+        System.out.println("Введите Ваш палиндром.");
         String palindromeString = scanner.nextLine();
 
         gameService.addToGamerLeaderList(gamer, palindromeString);
